@@ -34,21 +34,21 @@ def functional(wt0, wt1, predict_data):
         result -= predict_data.iloc[i][1]
         result = result ** 2
         sum += result
-    errors = int(sum / length)
+    errors = int(sum / ( 2 * length))
     return errors
 
 def change_wt(wt0, wt1, iter, data):
     length = len(data)
     sum0 = 0
     sum1 = 0
-    iter = 1 / (iter * iter)
+    iter = float(1 / (iter * iter))
     for i in range(length):
         sum0 += wt1 * data.iloc[i][0] + wt0 - data.iloc[i][1]
         sum1 += (wt1 * data.iloc[i][0] + wt0 - data.iloc[i][1]) * data.iloc[i][0]
     sum0 /= length
     sum1 /= length
-    wt0 = int(wt0 - iter * sum0)
-    wt1 = int(wt1 - iter * sum1)
+    wt0 = float(wt0 - iter * sum0)
+    wt1 = float(wt1 - iter * sum1)
     wt = numpy.array([wt0, wt1])
     return wt
 
@@ -57,10 +57,10 @@ def train_model(predict_data):
     wt = numpy.array([0, 0])
     wt_plot = pandas.DataFrame()
     wt_plot = wt_plot.append({'errors': functional(0, 0, predict_data), 'iter': 0}, ignore_index=True)
-    for i in range(1, 200):
+    for i in range(1, 30000):
         wt = change_wt(wt[0], wt[1], i, predict_data)
-        if functional(wt[0], wt[1], predict_data) == 3:
-            break
+        if i % 1000 == 0:
+            print(i, functional(wt[0], wt[1], predict_data), wt[0] * 3650, wt[1] * 3650)
         #wt_plot = wt_plot.append({'errors': functional(wt[0], wt[1], predict_data), 'iter': i}, ignore_index=True)
     #print_plot(wt_plot, 'wt_plot')
     return wt
